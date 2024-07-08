@@ -33,7 +33,7 @@ This repository contains the codebase for a comprehensive task management applic
 - **Migrations**: Database migrations for creating and managing schema.
 - **Testing**: Unit and end-to-end tests to ensure the functionality and reliability of the application.
 
-## Installation
+# Installation
 
 ```bash
 $ yarn install
@@ -43,7 +43,7 @@ $ yarn install
 $ yarn start
 ```
 
-## Running the app
+# Running the app
 
 ```bash
 # Build and run the application
@@ -53,7 +53,7 @@ $ yarn build
 $ yarn start
 ```
 
-## Docker Compose
+# Docker Compose
 
 ```bash
 # Build the Docker image
@@ -63,27 +63,27 @@ $ docker-compose build
 $ docker-compose up
 ```
 
-## Test
+# Test
 
 ```bash
 # e2e tests
 $ yarn test:e2e
 ```
 
-## Database Migrations
+# Database Migrations
 
-# Creating Migration
+## Creating Migration
 
 ```bash
 $ yarn typeorm migration:create <migration-name>
 ```
-# Running Migrations
+## Running Migrations
 
 ```bash
 $ yarn typeorm migration:run
 ```
 
-# Example of Migration
+## Example of Migration
 
 ```typescript
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
@@ -158,7 +158,6 @@ Nest is [MIT licensed](LICENSE).
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://opencollective.com/nest).
-```
 
 
 
