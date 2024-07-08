@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Session,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,8 +18,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { SessionData } from 'express-session';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -28,9 +31,15 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiBody({ type: CreateUserDto })
+  @Roles(UserRole.ADMIN)
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
+  }
+
+  @Get('me')
+  async getMe(@Session() session: SessionData) {
+    console.log(session);
   }
 
   @ApiCreatedResponse({ type: User, isArray: true })

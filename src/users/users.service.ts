@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { encodePassword } from 'src/utils/bcrypt';
 
@@ -20,6 +20,7 @@ export class UsersService {
       const newUser = this.userRepository.create({
         ...createUserDto,
         password,
+        role: createUserDto.role || UserRole.USER,
       });
 
       return this.userRepository.save(newUser);
@@ -32,12 +33,19 @@ export class UsersService {
     try {
       const users = await this.userRepository
         .createQueryBuilder('user')
+        .leftJoinAndSelect('user.tasks', 'tasks')
         .select([
           'user.id',
           'user.firstName',
           'user.lastName',
           'user.email',
+          'user.role',
           'user.isActive',
+          'tasks.id',
+          'tasks.title',
+          'tasks.description',
+          'tasks.status',
+          'tasks.dueDate',
         ])
         .getMany();
       return users;
@@ -56,6 +64,7 @@ export class UsersService {
           'user.firstName',
           'user.lastName',
           'user.email',
+          'user.role',
           'user.isActive',
         ])
         .getOne();
@@ -89,6 +98,9 @@ export class UsersService {
     try {
       const findUserByEmail = await this.userRepository
         .createQueryBuilder('user')
+        .leftJoinAndSelect('user.tasks', 'tasks')
+        .leftJoinAndSelect('tasks.comments', 'comments')
+        .leftJoinAndSelect('comments.user', 'commentUser')
         .where('user.email = :email', { email })
         .select([
           'user.id',
@@ -96,7 +108,17 @@ export class UsersService {
           'user.password',
           'user.lastName',
           'user.email',
+          'user.role',
           'user.isActive',
+          'tasks.id',
+          'tasks.title',
+          'tasks.description',
+          'tasks.status',
+          'tasks.dueDate',
+          'comments.id',
+          'comments.content',
+          'commentUser.id',
+          'commentUser.username',
         ])
         .getOne();
       this.logger.log(findUserByEmail);

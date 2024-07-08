@@ -19,12 +19,19 @@
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This repository contains the codebase for a comprehensive task management application built using the NestJS framework. The application includes user authentication, task management, and role-based access control.
+
+## Features
+
+- **User Authentication**: User registration and login with JWT 
+- **Task Management**: Create, update, delete, and view tasks with attributes like title, description, status, and due date.
+- **Collaboration**: Assign tasks to users, comment on tasks, and receive notifications for task assignments and comments.
+- **Role-Based Access Control**: Ensure users have appropriate roles for accessing specific routes.
+- **Migrations**: Database migrations for creating and managing schema.
+- **Testing**: Unit and end-to-end tests to ensure the functionality and reliability of the application.
 
 ## Installation
 
@@ -32,42 +39,130 @@
 $ yarn install
 ```
 
+```bash
+$ yarn start
+```
+
 ## Running the app
 
 ```bash
-# development
-$ yarn run start
+# Build and run the application
+$ yarn build
 
-# watch mode
-$ yarn run start:dev
+# Start the application
+$ yarn start
+```
 
-# production mode
-$ yarn run start:prod
+## Docker Compose
+
+```bash
+# Build the Docker image
+$ docker-compose build
+
+# Run the Docker container
+$ docker-compose up
 ```
 
 ## Test
 
 ```bash
-# unit tests
-$ yarn run test
-
 # e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+$ yarn test:e2e
 ```
 
-## Support
+## Database Migrations
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Creating Migration
+
+```bash
+$ yarn typeorm migration:create <migration-name>
+```
+# Running Migrations
+
+```bash
+$ yarn typeorm migration:run
+```
+
+# Example of Migration
+
+```typescript
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+
+export class Users1718371114614 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'user',
+        columns: [
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'uuid',
+            default: `uuid_generate_v4()`,
+          },
+          {
+            name: 'username',
+            type: 'varchar',
+            isUnique: true,
+          },
+          {
+            name: 'firstName',
+            type: 'varchar',
+          },
+          {
+            name: 'lastName',
+            type: 'varchar',
+          },
+          {
+            name: 'password',
+            type: 'varchar',
+          },
+          {
+            name: 'email',
+            type: 'varchar',
+          },
+          {
+            name: 'role',
+            type: 'enum',
+            enum: ['admin', 'user'],
+            default: "'user'",
+          },
+          {
+            name: 'isActive',
+            type: 'boolean',
+            default: true,
+          },
+        ],
+      }),
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('user');
+  }
+}
+```
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Muhammad Farrel Fauzan](https://linkedin.com/in/farrelfauzan)
 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://opencollective.com/nest).
+```
+
+
+
+
+
+
+

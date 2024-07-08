@@ -38,6 +38,12 @@ export class Users1718371114614 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'role',
+            type: 'enum',
+            enum: ['admin', 'user'],
+            default: "'user'",
+          },
+          {
             name: 'isActive',
             type: 'boolean',
             default: true,

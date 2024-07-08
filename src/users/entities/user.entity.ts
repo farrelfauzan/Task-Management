@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Task } from 'src/task/entities/task.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
 
 @Entity()
 export class User {
@@ -20,6 +26,12 @@ export class User {
   @Column()
   email: string;
 
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
+
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 }

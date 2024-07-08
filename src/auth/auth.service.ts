@@ -5,6 +5,8 @@ import { comparePassword } from 'src/utils/bcrypt';
 import { User } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -16,11 +18,13 @@ export class AuthService {
   ) {}
 
   // Login method
-  async login(user: LoginAuthDto): Promise<any> {
+  async login(user: LoginAuthDto, req: Request): Promise<any> {
     try {
       const { email, password } = user;
       const userFound = await this.validateUser(email, password);
+      console.log(userFound);
       if (userFound) {
+        req.session.user = userFound;
         return {
           user: userFound,
           bearerToken: this.jwtService.sign(
@@ -52,7 +56,6 @@ export class AuthService {
   ): Promise<User | undefined> {
     try {
       const user = await this.userService.findUserByEmail(email);
-      console.log(user);
       if (user) {
         const isMatch = await comparePassword(password, user.password);
         if (isMatch) {
@@ -63,9 +66,17 @@ export class AuthService {
       }
       return undefined; // Return undefined if user not found
     } catch (error) {
-      console.log(error);
       this.logger.error(error);
       return undefined; // Return undefined in case of error
+    }
+  }
+
+  async register(user: CreateUserDto): Promise<User> {
+    try {
+      const newUser = await this.userService.create(user);
+      return newUser;
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 }
