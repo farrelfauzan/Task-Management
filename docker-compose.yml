@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: /bin/sh -c "yarn run typeorm:run-migrations && yarn run start"
     env_file:
       - .env
     ports:
