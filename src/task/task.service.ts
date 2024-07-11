@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,6 +20,7 @@ export class TaskService {
       return this.taskRepository.save(newTask);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -44,6 +45,7 @@ export class TaskService {
       return tasks;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -65,6 +67,7 @@ export class TaskService {
       return task;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -75,6 +78,7 @@ export class TaskService {
       return this.taskRepository.save(task);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -84,6 +88,7 @@ export class TaskService {
       return this.taskRepository.remove(task);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 }

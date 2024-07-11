@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +19,7 @@ export class CommentsService {
       return await this.commentRepository.save(newComment);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -32,6 +33,7 @@ export class CommentsService {
       return comments;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -43,6 +45,7 @@ export class CommentsService {
       return comment;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -62,6 +65,7 @@ export class CommentsService {
       return updatedComment;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -74,6 +78,7 @@ export class CommentsService {
       return await this.commentRepository.remove(comment);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 }

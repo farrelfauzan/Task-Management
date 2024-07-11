@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -36,6 +36,7 @@ export class UsersService {
       return this.userRepository.save(newUser);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -61,6 +62,7 @@ export class UsersService {
       return users;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, 400);
     }
   }
 
@@ -87,6 +89,7 @@ export class UsersService {
       });
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -98,6 +101,7 @@ export class UsersService {
       return response;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -110,6 +114,7 @@ export class UsersService {
       return await this.userRepository.remove(user);
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -144,6 +149,7 @@ export class UsersService {
       return findUserByEmail;
     } catch (error) {
       this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
 }
