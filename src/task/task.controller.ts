@@ -29,30 +29,33 @@ export class TaskController {
 
   @ApiBody({ type: CreateTaskDto })
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
+  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.taskService.createTask(createTaskDto);
   }
 
   @ApiCreatedResponse({ type: Task, isArray: true })
   @Get()
-  findAll() {
+  findAll(): Promise<Task[]> {
     return this.taskService.findAll();
   }
 
   @ApiCreatedResponse({ type: Task })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Task> {
     return this.taskService.findOne(id);
   }
 
   @ApiBody({ type: UpdateTaskDto })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ): Promise<Task> {
     return this.taskService.update(id, updateTaskDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<Task> {
     return this.taskService.remove(id);
   }
 }

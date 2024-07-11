@@ -28,31 +28,34 @@ export class CommentsController {
 
   @ApiBody({ type: CreateCommentDto })
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
+  create(@Body() createCommentDto: CreateCommentDto): Promise<Comment> {
     return this.commentsService.createComment(createCommentDto);
   }
 
   @ApiCreatedResponse({ type: Comment, isArray: true })
   @Get()
-  findAll() {
+  findAll(): Promise<Comment[]> {
     return this.commentsService.findAll();
   }
 
   @ApiCreatedResponse({ type: Comment })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Comment> {
     return this.commentsService.findOne(id);
   }
 
   @ApiCreatedResponse({ type: Comment })
   @ApiBody({ type: CreateCommentDto })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: CreateCommentDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCommentDto: CreateCommentDto,
+  ): Promise<Comment> {
     return this.commentsService.update(id, updateCommentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<Comment> {
     return this.commentsService.remove(id);
   }
 }

@@ -80,15 +80,24 @@ export class UsersService {
     }
   }
 
-  async remove(id: string): Promise<void> {
+  async findOne(id: string): Promise<User> {
     try {
-      const user = await this.userRepository.findOne({
+      const response = await this.userRepository.findOne({
         where: { id },
       });
+      return response;
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  async remove(id: string): Promise<User> {
+    try {
+      const user = await this.findOne(id);
       if (!user) {
         throw new Error('User not found');
       }
-      await this.userRepository.delete(id);
+      return await this.userRepository.remove(user);
     } catch (error) {
       this.logger.error(error);
     }

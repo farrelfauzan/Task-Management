@@ -65,14 +65,13 @@ export class CommentsService {
     }
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: string): Promise<Comment> {
     try {
-      const comment = await this.commentRepository.findOne({
-        where: { id },
-      });
-      if (!comment) return false;
-      await this.commentRepository.remove(comment);
-      return true;
+      const comment = await this.findOne(id);
+      if (!comment) {
+        throw new Error('Comment not found');
+      }
+      return await this.commentRepository.remove(comment);
     } catch (error) {
       this.logger.error(error);
     }
