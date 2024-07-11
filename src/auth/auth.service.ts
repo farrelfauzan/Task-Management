@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { LoginAuthDto } from './dto/login-auth';
 import { comparePassword } from 'src/utils/bcrypt';
@@ -7,11 +7,13 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { Request } from 'express';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
+    private dataSource: DataSource,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -31,6 +33,7 @@ export class AuthService {
             {
               id: userFound.id,
               email: userFound.email,
+              username: userFound.username,
               firstName: userFound.firstName,
               lastName: userFound.lastName,
               isActive: userFound.isActive,
@@ -71,12 +74,19 @@ export class AuthService {
     }
   }
 
-  async register(user: CreateUserDto): Promise<User> {
+  async register(user: CreateUserDto): Promise<User | any> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const newUser = await this.userService.create(user);
+      await queryRunner.commitTransaction();
       return newUser;
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       this.logger.error(error);
+      throw new HttpException(error.response, HttpStatus.BAD_REQUEST);
     }
   }
 }

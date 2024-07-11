@@ -15,17 +15,31 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    console.log(createUserDto);
     try {
-      const findByEmail = await this.findUserByEmail(createUserDto.email);
+      // Check if a user with the same username exists
+      const existingUserByUsername = await this.userRepository.findOne({
+        where: {
+          username: createUserDto.username,
+        },
+      });
 
-      if (findByEmail) {
-        throw new Error('User already exists');
-      }
-
-      if (findByEmail.username === createUserDto.username) {
+      if (existingUserByUsername) {
         throw new Error('Username already exists');
       }
 
+      // Check if a user with the same email exists
+      const existingUserByEmail = await this.userRepository.findOne({
+        where: {
+          email: createUserDto.email,
+        },
+      });
+
+      if (existingUserByEmail) {
+        throw new Error('Email already exists');
+      }
+
+      // If no user exists with the same email or username, proceed to create a new user
       const password = await encodePassword(createUserDto.password);
       const newUser = this.userRepository.create({
         ...createUserDto,
@@ -47,6 +61,7 @@ export class UsersService {
         .leftJoinAndSelect('user.tasks', 'tasks')
         .select([
           'user.id',
+          'user.username',
           'user.firstName',
           'user.lastName',
           'user.email',
@@ -105,6 +120,18 @@ export class UsersService {
     }
   }
 
+  async findByUserName(username: string): Promise<User> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { username },
+      });
+      return user;
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async remove(id: string): Promise<User> {
     try {
       const user = await this.findOne(id);
@@ -128,6 +155,7 @@ export class UsersService {
         .where('user.email = :email', { email })
         .select([
           'user.id',
+          'user.username',
           'user.firstName',
           'user.password',
           'user.lastName',
