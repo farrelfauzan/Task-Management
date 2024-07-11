@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:22-alpine
 
 RUN apk add --no-cache bash
 
@@ -8,13 +8,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install
 
-# COPY waiting.sh ./
-
-# RUN chmod +x waiting.sh
-
 COPY . .
-
-# RUN yarn run typeorm:run-migrations
 
 RUN yarn build
 
