@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Session,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,6 +24,7 @@ import { User, UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { SessionData } from 'express-session';
+import { Request } from 'express';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -53,9 +56,9 @@ export class UsersController {
     return await this.usersService.findUserByEmail(email);
   }
 
-  @Roles(UserRole.ADMIN)
+  // @Roles(UserRole.ADMIN)
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<User> {
+  async remove(@Param('id') id: string, req: Request): Promise<User> {
     return await this.usersService.remove(id);
   }
 

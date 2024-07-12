@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { Request } from 'express';
 import { DataSource } from 'typeorm';
+import { SessionData } from 'express-session';
 
 @Injectable()
 export class AuthService {
@@ -20,13 +21,19 @@ export class AuthService {
   ) {}
 
   // Login method
-  async login(user: LoginAuthDto, req: Request): Promise<any> {
+  async login(
+    user: LoginAuthDto,
+    req: Request,
+    session: SessionData,
+  ): Promise<any> {
     try {
       const { email, password } = user;
       const userFound = await this.validateUser(email, password);
       console.log(userFound);
       if (userFound) {
-        req.session.user = userFound;
+        console.log('User found');
+        session.user = userFound;
+        console.log(session);
         return {
           user: userFound,
           bearerToken: this.jwtService.sign(
